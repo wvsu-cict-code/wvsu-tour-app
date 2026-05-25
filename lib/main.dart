@@ -17,18 +17,18 @@ Future<void> main() async {
 
   FirebaseFirestore.instance.settings = Settings(persistenceEnabled: true);
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({
+  const MyApp({
     Key key,
-  });
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Auth appAuth = new Auth();
+    final Auth appAuth = Auth();
     return MaterialApp(
-        home: new RootScreen(auth: appAuth),
+        home: RootScreen(auth: appAuth),
         theme: ThemeData(
           primaryColor: appPrimaryColor,
           scaffoldBackgroundColor: appScaffoldBackgroundColor,
@@ -37,9 +37,9 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         routes: <String, WidgetBuilder>{
-          '/login': (BuildContext context) => new AuthScreen(auth: appAuth),
-          '/home': (BuildContext context) => new HomeScreen(),
-          '/legal': (BuildContext context) => new LegalScreen(),
+          '/login': (BuildContext context) => AuthScreen(auth: appAuth),
+          '/home': (BuildContext context) => HomeScreen(),
+          '/legal': (BuildContext context) => LegalScreen(),
         });
   }
 }
