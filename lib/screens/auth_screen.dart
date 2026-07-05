@@ -20,8 +20,11 @@ class AuthScreen extends StatefulWidget {
   _AuthScreenState createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _AuthScreenState extends State<AuthScreen>
+    with SingleTickerProviderStateMixin {
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  late final AnimationController _welcomeImageController;
+  late final Animation<double> _welcomeImageOffset;
   int _pageState = 0;
 
   var _backgroundColor = appPrimaryColor;
@@ -39,10 +42,24 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   void initState() {
     super.initState();
+    _welcomeImageController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 2200),
+    )..repeat(reverse: true);
+    _welcomeImageOffset = CurvedAnimation(
+      parent: _welcomeImageController,
+      curve: Curves.easeInOut,
+    ).drive(Tween<double>(begin: -8, end: 8));
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
         statusBarColor: Colors.transparent));
     _googleSignIn.initialize();
+  }
+
+  @override
+  void dispose() {
+    _welcomeImageController.dispose();
+    super.dispose();
   }
 
   void _showSnackbar(String message) {
@@ -104,6 +121,24 @@ class _AuthScreenState extends State<AuthScreen> {
       });
       print(e);
       _showSnackbar("Failed to sign in with Google. :(");
+    }
+  }
+
+  Future<void> _loginAnonymously() async {
+    try {
+      setState(() {
+        _loading = true;
+      });
+      final UserCredential userCredential =
+          await widget.auth.signInAnonymously();
+      _showSnackbar("Continuing as guest");
+      print(userCredential.user?.uid);
+    } catch (e) {
+      setState(() {
+        _loading = false;
+      });
+      print(e);
+      _showSnackbar("Failed to continue as guest. :(");
     }
   }
 
@@ -198,70 +233,98 @@ class _AuthScreenState extends State<AuthScreen> {
           curve: Curves.fastLinearToSlowEaseIn,
           duration: Duration(milliseconds: 1000),
           color: _backgroundColor,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: double.infinity,
-                margin: EdgeInsets.only(top: appScreenSize.height * 0.07),
-                padding: EdgeInsets.symmetric(horizontal: 32),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              double welcomeImageHeight = appScreenSize.width * 0.72;
+              final double maxWelcomeImageHeight = constraints.maxHeight * 0.38;
+              if (welcomeImageHeight > maxWelcomeImageHeight) {
+                welcomeImageHeight = maxWelcomeImageHeight;
+              }
+
+              return SafeArea(
+                top: false,
+                minimum: EdgeInsets.only(bottom: 8),
                 child: Column(
                   children: [
-                    AnimatedSwitcher(
-                      transitionBuilder: (child, animation) => FadeTransition(
-                        opacity: animation,
-                        child: child,
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(top: appScreenSize.height * 0.07),
+                      padding: EdgeInsets.symmetric(horizontal: 32),
+                      child: Column(
+                        children: [
+                          AnimatedSwitcher(
+                            transitionBuilder: (child, animation) =>
+                                FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            ),
+                            duration: Duration(milliseconds: 1000),
+                            switchInCurve: Curves.fastLinearToSlowEaseIn,
+                            child: _appIcon,
+                          ),
+                        ],
                       ),
-                      duration: Duration(milliseconds: 1000),
-                      switchInCurve: Curves.fastLinearToSlowEaseIn,
-                      child: _appIcon,
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 10),
-              Center(
-                child: WebsafeSvg.asset(
-                    "assets/images/welcome_illustration.svg",
-                    height: appScreenSize.width * 0.8),
-              ),
-              Padding(
-                  padding: EdgeInsets.all(30),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: AppPrimaryButton(
-                      text: "Let's Go!",
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          barrierDismissible: false, // user must tap button!
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Currently in Open Beta'),
-                              content: SingleChildScrollView(
-                                child: ListBody(
-                                  children: <Widget>[
-                                    Text(
-                                        'More features and contents will be added soon.'),
-                                  ],
-                                ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text('OK'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    _switchToState(0, 1);
-                                  },
-                                ),
-                              ],
+                    SizedBox(height: 8),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment(0, -0.3),
+                        child: AnimatedBuilder(
+                          animation: _welcomeImageOffset,
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(0, -8 + _welcomeImageOffset.value),
+                              child: child,
                             );
                           },
-                        );
-                      },
+                          child: WebsafeSvg.asset(
+                            "assets/images/welcome_illustration.svg",
+                            height: welcomeImageHeight,
+                          ),
+                        ),
+                      ),
                     ),
-                  ))
-            ],
+                    Padding(
+                        padding: EdgeInsets.fromLTRB(30, 12, 30, 30),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: AppPrimaryButton(
+                            text: "Let's Go!",
+                            onPressed: () {
+                              showDialog<void>(
+                                context: context,
+                                barrierDismissible:
+                                    false, // user must tap button!
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Currently in Open Beta'),
+                                    content: SingleChildScrollView(
+                                      child: ListBody(
+                                        children: <Widget>[
+                                          Text(
+                                              'More features and contents will be added soon.'),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          _switchToState(0, 1);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ))
+                  ],
+                ),
+              );
+            },
           ),
         ),
         AnimatedContainer(
@@ -272,7 +335,7 @@ class _AuthScreenState extends State<AuthScreen> {
             transform:
                 Matrix4.translationValues(_loginXOffset, _loginYOffset, 1),
             decoration: BoxDecoration(
-                color: Colors.white.withOpacity(_loginOpacity),
+                color: Colors.white.withValues(alpha: _loginOpacity),
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(25),
                     topRight: Radius.circular(25))),
@@ -312,6 +375,16 @@ class _AuthScreenState extends State<AuthScreen> {
                             onPressed: () => _loginWithGoogle(),
                           )),
                     ),
+                    Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: SizedBox(
+                            width: double.infinity,
+                            child: AppSecondaryButton(
+                              text: "Continue as Guest",
+                              icon: SimpleLineIcons.user,
+                              onPressed: _loginAnonymously,
+                            ))),
                     Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: 20, vertical: 10),

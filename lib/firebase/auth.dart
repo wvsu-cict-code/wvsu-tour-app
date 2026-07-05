@@ -16,6 +16,8 @@ abstract class BaseAuth {
   Stream<User?> checkAuthStatus();
 
   Future<UserCredential> signInWithCredentials(AuthCredential credential);
+
+  Future<UserCredential> signInAnonymously();
 }
 
 class Auth implements BaseAuth {
@@ -47,6 +49,11 @@ class Auth implements BaseAuth {
   Future<UserCredential> signInWithCredentials(
       AuthCredential credential) async {
     return _firebaseAuth.signInWithCredential(credential);
+  }
+
+  @override
+  Future<UserCredential> signInAnonymously() async {
+    return _firebaseAuth.signInAnonymously();
   }
 
   @override
