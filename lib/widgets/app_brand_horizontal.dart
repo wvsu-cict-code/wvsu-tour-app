@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:websafe_svg/websafe_svg.dart';
 
 class AppBrandHorizontal extends StatelessWidget {
-  const AppBrandHorizontal({Key key}) : super(key: key);
+  const AppBrandHorizontal({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

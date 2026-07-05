@@ -1,24 +1,20 @@
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:markdown_widget/markdown_generator.dart';
+import 'package:markdown_widget/widget/markdown_block.dart';
 import 'package:wvsu_tour_app/config/app.dart';
 
 class AcademicBuildingDetailsScreen extends StatelessWidget {
   const AcademicBuildingDetailsScreen(
-      {Key key, this.name, this.featuredImage, this.longDescription})
+      {Key? key, this.name, this.featuredImage, this.longDescription})
       : super(key: key);
-  final String name;
+  final String? name;
   final dynamic featuredImage;
-  final String longDescription;
+  final String? longDescription;
 
   @override
   Widget build(BuildContext context) {
-    Widget buildMarkdown() => Column(
-          children: MarkdownGenerator(data: this.longDescription).widgets,
-        );
     Size appScreenSize = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Colors.white,
@@ -61,11 +57,11 @@ class AcademicBuildingDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      this.name,
+                      this.name ?? '',
                       style: appSecondaryTitleTextStyle,
                     ),
                     SizedBox(height: 10),
-                    buildMarkdown()
+                    MarkdownBlock(data: this.longDescription ?? '')
                   ],
                 ),
               )

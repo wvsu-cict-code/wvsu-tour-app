@@ -5,7 +5,7 @@ import 'package:wvsu_tour_app/config/app.dart';
 import 'package:wvsu_tour_app/widgets/college_card.dart';
 
 class CollegesList extends StatefulWidget {
-  CollegesList({Key key}) : super(key: key);
+  CollegesList({Key? key}) : super(key: key);
 
   @override
   _CollegesListState createState() => _CollegesListState();
@@ -18,7 +18,7 @@ class _CollegesListState extends State<CollegesList> {
   Widget build(BuildContext context) {
     Size appScreenSize = MediaQuery.of(context).size;
 
-    CollectionReference collection =
+    final CollectionReference<Map<String, dynamic>> collection =
         FirebaseFirestore.instance.collection('colleges');
 
     ScrollController _view = ScrollController();
@@ -28,10 +28,11 @@ class _CollegesListState extends State<CollegesList> {
         child: SizedBox(
             height: 250,
             width: double.infinity,
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: collection.snapshots(),
                 builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshot) {
                   if (snapshot.hasError) {
                     return Text("An error occured.");
                   }
@@ -53,13 +54,13 @@ class _CollegesListState extends State<CollegesList> {
                       children: [
                         SizedBox(width: 20),
                         Row(
-                          children: snapshot.data.docs
+                          children: snapshot.data!.docs
                               .map((e) => CollegeCard(
                                     id: e.id,
                                     height: 200,
                                     width: 300,
                                     campus: e.data()['Campus'],
-                                    photos: e.data()['photos'],
+                                    photos: e.data()['Photos'],
                                     name: e.data()['Name'],
                                     longDescription:
                                         e.data()['LongDescription'],

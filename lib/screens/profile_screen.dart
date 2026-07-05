@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wvsu_tour_app/config/app.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({Key key}) : super(key: key);
+  ProfileScreen({Key? key}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();

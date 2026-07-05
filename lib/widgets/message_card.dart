@@ -7,7 +7,7 @@ import 'package:wvsu_tour_app/widgets/like_counter.dart';
 
 class MessageCard extends StatelessWidget {
   const MessageCard(
-      {Key key,
+      {Key? key,
       this.id,
       this.name,
       this.featuredImage,
@@ -18,14 +18,14 @@ class MessageCard extends StatelessWidget {
       this.width})
       : super(key: key);
 
-  final String name;
-  final String id;
-  final String featuredImage;
-  final GestureTapCallback onPressed;
-  final double height;
-  final double width;
-  final String messageBody;
-  final String description;
+  final String? name;
+  final String? id;
+  final String? featuredImage;
+  final VoidCallback? onPressed;
+  final double? height;
+  final double? width;
+  final String? messageBody;
+  final String? description;
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -65,7 +65,7 @@ class MessageCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         child: Center(
                             child: ExtendedImage.network(
-                          this.featuredImage,
+                          this.featuredImage ?? '',
                           fit: BoxFit.cover,
                           cache: true,
                         )),
@@ -90,13 +90,10 @@ class MessageCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(this.name != null ? this.name : "Loading...",
+                          Text(this.name ?? '',
                               style: GoogleFonts.lato(
                                   color: Colors.white, fontSize: 20)),
-                          Text(
-                              this.description != null
-                                  ? this.description
-                                  : "Loading...",
+                          Text(this.description ?? '',
                               style: GoogleFonts.lato(color: Colors.white)),
                         ],
                       )),

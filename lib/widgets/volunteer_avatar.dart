@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class VolunteersAvatar extends StatelessWidget {
   const VolunteersAvatar(
-      {Key key,
+      {Key? key,
       this.name,
       this.profileImage,
       this.description,
@@ -12,11 +12,11 @@ class VolunteersAvatar extends StatelessWidget {
       this.width})
       : super(key: key);
 
-  final double height;
-  final double width;
-  final String profileImage;
-  final String description;
-  final String name;
+  final double? height;
+  final double? width;
+  final String? profileImage;
+  final String? description;
+  final String? name;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,7 +29,7 @@ class VolunteersAvatar extends StatelessWidget {
           CircularProfileAvatar(
             this.profileImage ?? "",
             radius: 50,
-            backgroundColor: Colors.grey[200],
+            backgroundColor: Colors.grey[200] ?? Colors.grey,
             borderWidth: 10,
             borderColor: Colors.transparent,
             cacheImage: true,
@@ -51,7 +51,8 @@ class VolunteersAvatar extends StatelessWidget {
                                   child: CircularProfileAvatar(
                                     this.profileImage ?? "",
                                     radius: 100,
-                                    backgroundColor: Colors.grey[200],
+                                    backgroundColor:
+                                        Colors.grey[200] ?? Colors.grey,
                                     borderWidth: 10,
                                     borderColor: Colors.transparent,
                                     cacheImage: true,
@@ -64,7 +65,7 @@ class VolunteersAvatar extends StatelessWidget {
                                   style: GoogleFonts.lato(fontSize: 20),
                                   textAlign: TextAlign.center,
                                 ),
-                                Text(this.description,
+                                Text(this.description ?? '',
                                     textAlign: TextAlign.center),
                               ],
                             )
@@ -72,7 +73,7 @@ class VolunteersAvatar extends StatelessWidget {
                         ),
                       ),
                       actions: <Widget>[
-                        FlatButton(
+                        TextButton(
                           child: Text('OK'),
                           onPressed: () {
                             Navigator.of(context).pop();

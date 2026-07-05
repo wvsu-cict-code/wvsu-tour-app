@@ -9,8 +9,8 @@ import 'package:wvsu_tour_app/widgets/app_brand_horizontal.dart';
 import 'package:wvsu_tour_app/config/app.dart';
 
 class ThankyouFrontlinersScreen extends StatefulWidget {
-  ThankyouFrontlinersScreen({Key key, this.auth}) : super(key: key);
-  BaseAuth auth;
+  const ThankyouFrontlinersScreen({super.key, required this.auth});
+  final BaseAuth auth;
   @override
   _ThankyouFrontlinersScreenState createState() =>
       _ThankyouFrontlinersScreenState();
@@ -24,26 +24,22 @@ class _ThankyouFrontlinersScreenState extends State<ThankyouFrontlinersScreen> {
         statusBarIconBrightness: Brightness.light,
         statusBarColor: Colors.transparent));
 
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
   }
 
   @override
   Widget build(BuildContext context) {
     Size appScreenSize = MediaQuery.of(context).size;
-    CollectionReference thankyouCounter =
+    final CollectionReference<Map<String, dynamic>> thankyouCounter =
         FirebaseFirestore.instance.collection('thankyou_counter');
 
-    Future<void> addLike() {
-      widget.auth
-          .getCurrentUser()
-          .then((user) => {
-                thankyouCounter
-                    .doc(user.uid)
-                    .set({'liked': true})
-                    .then((value) => print("Liked"))
-                    .catchError((error) => print("Failed like: $error"))
-              })
-          .catchError((error) => print("Failed like: $error"));
+    Future<void> addLike() async {
+      final user = await widget.auth.getCurrentUser();
+      if (user == null) {
+        return;
+      }
+      await thankyouCounter.doc(user.uid).set({'liked': true});
     }
 
     return Container(
@@ -97,10 +93,11 @@ class _ThankyouFrontlinersScreenState extends State<ThankyouFrontlinersScreen> {
                   SizedBox(
                     width: 20,
                   ),
-                  StreamBuilder<QuerySnapshot>(
+                  StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                       stream: thankyouCounter.snapshots(),
                       builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                              snapshot) {
                         if (snapshot.hasError) {
                           return Text("0",
                               style: GoogleFonts.lato(
@@ -114,10 +111,7 @@ class _ThankyouFrontlinersScreenState extends State<ThankyouFrontlinersScreen> {
                         }
 
                         if (snapshot.hasData) {
-                          return Text(
-                              snapshot.data.docs != null
-                                  ? snapshot.data.docs.length.toString()
-                                  : "0",
+                          return Text(snapshot.data!.docs.length.toString(),
                               style: GoogleFonts.lato(
                                   fontSize: 60, color: Colors.white));
                         }
@@ -132,7 +126,7 @@ class _ThankyouFrontlinersScreenState extends State<ThankyouFrontlinersScreen> {
                 width: double.infinity,
               ),
               AvatarGlow(
-                endRadius: 60.0,
+                glowRadiusFactor: 0.6,
                 child: Material(
                   elevation: 0,
                   shape: CircleBorder(),

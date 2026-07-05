@@ -8,7 +8,7 @@ import 'package:wvsu_tour_app/widgets/messages_list.dart';
 import 'package:wvsu_tour_app/widgets/organizations_list.dart';
 
 class CampusLifeScreen extends StatefulWidget {
-  CampusLifeScreen({Key key}) : super(key: key);
+  CampusLifeScreen({Key? key}) : super(key: key);
 
   @override
   _CampusLifeScreenState createState() => _CampusLifeScreenState();

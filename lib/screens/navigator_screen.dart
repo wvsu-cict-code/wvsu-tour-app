@@ -10,7 +10,7 @@ import 'package:wvsu_tour_app/widgets/colleges_list.dart';
 import 'package:wvsu_tour_app/widgets/facilities_amenities_list.dart';
 
 class NavigatorScreen extends StatefulWidget {
-  NavigatorScreen({Key key}) : super(key: key);
+  NavigatorScreen({Key? key}) : super(key: key);
 
   @override
   _NavigatorScreenState createState() => _NavigatorScreenState();
@@ -19,7 +19,7 @@ class NavigatorScreen extends StatefulWidget {
 class _NavigatorScreenState extends State<NavigatorScreen> {
   List<int> data = [];
 
-  ScrollController _scrollController;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
@@ -49,6 +49,7 @@ class _NavigatorScreenState extends State<NavigatorScreen> {
                 statusBarColor: appSecondaryColor));
           }
         }
+        return false;
       },
       child: SingleChildScrollView(
         controller: _scrollController,

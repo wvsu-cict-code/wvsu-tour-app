@@ -5,7 +5,7 @@ import 'package:wvsu_tour_app/config/app.dart';
 import 'package:wvsu_tour_app/widgets/message_card.dart';
 
 class MessagesList extends StatefulWidget {
-  MessagesList({Key key}) : super(key: key);
+  MessagesList({Key? key}) : super(key: key);
 
   @override
   _MessagesListState createState() => _MessagesListState();
@@ -19,20 +19,19 @@ class _MessagesListState extends State<MessagesList> {
     Size appScreenSize = MediaQuery.of(context).size;
     ScrollController _view = ScrollController();
     double _cardHeight = appScreenSize.height * 0.5;
-    CollectionReference collection =
+    final CollectionReference<Map<String, dynamic>> collection =
         FirebaseFirestore.instance.collection('messages');
-
-    collection.firestore.settings = Settings(persistenceEnabled: true);
 
     return Container(
         margin: EdgeInsets.symmetric(vertical: 20),
         child: SizedBox(
             height: appScreenSize.height * 0.5,
             width: double.infinity,
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: collection.snapshots(),
                 builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshot) {
                   if (snapshot.hasError) {
                     return Text("An error occured.");
                   }
@@ -53,7 +52,7 @@ class _MessagesListState extends State<MessagesList> {
                       children: [
                         SizedBox(width: 20),
                         Row(
-                          children: snapshot.data.docs
+                          children: snapshot.data!.docs
                               .map((e) => MessageCard(
                                     id: e.id,
                                     height: _cardHeight - 20,

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -6,12 +5,11 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wvsu_tour_app/config/app.dart';
 import 'package:wvsu_tour_app/screens/campus_details.dart';
-import 'package:wvsu_tour_app/screens/photo_viewer.dart';
 import 'package:wvsu_tour_app/widgets/like_counter.dart';
 
 class CampusCard extends StatelessWidget {
   const CampusCard(
-      {Key key,
+      {Key? key,
       this.shortDescription,
       this.fullDescription,
       this.name,
@@ -23,15 +21,15 @@ class CampusCard extends StatelessWidget {
       this.width})
       : super(key: key);
 
-  final double height;
-  final double width;
-  final String id;
-  final String logo;
-  final String name;
-  final String fullDescription;
-  final String shortDescription;
-  final String featuredImage;
-  final String fullImage;
+  final double? height;
+  final double? width;
+  final String? id;
+  final String? logo;
+  final String? name;
+  final String? fullDescription;
+  final String? shortDescription;
+  final String? featuredImage;
+  final String? fullImage;
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -65,12 +63,12 @@ class CampusCard extends StatelessWidget {
                     borderRadius: appDefaultBorderRadius,
                     child: Container(
                       decoration: BoxDecoration(color: appPrimaryColor),
-                      height: this.height + 10,
+                      height: (this.height ?? 0) + 10,
                       child: FittedBox(
                         fit: BoxFit.cover,
                         child: Center(
                             child: ExtendedImage.network(
-                          this.featuredImage,
+                          this.featuredImage ?? '',
                           fit: BoxFit.fill,
                           cache: true,
                           border: Border.all(color: Colors.red, width: 1.0),
@@ -81,7 +79,7 @@ class CampusCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: this.height + 10,
+                    height: (this.height ?? 0) + 10,
                     width: this.width,
                     child: Opacity(
                       opacity: 0.3,
@@ -99,9 +97,9 @@ class CampusCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CircularProfileAvatar(
-                          this.logo,
+                          this.logo ?? '',
                           radius: 60,
-                          backgroundColor: Colors.grey[200],
+                          backgroundColor: Colors.grey[200] ?? Colors.grey,
                           borderWidth: 10,
                           borderColor: Colors.transparent,
                           cacheImage: true,
@@ -134,7 +132,7 @@ class CampusCard extends StatelessWidget {
                             SizedBox(
                               width: 5,
                             ),
-                            Text(this.name != null ? this.name : "Loading...",
+                            Text(this.name ?? '',
                                 style: GoogleFonts.lato(color: Colors.white),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,

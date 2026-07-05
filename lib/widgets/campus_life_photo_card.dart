@@ -7,7 +7,7 @@ import 'package:wvsu_tour_app/screens/photo_viewer.dart';
 
 class CampusLifePhotoCard extends StatelessWidget {
   const CampusLifePhotoCard(
-      {Key key,
+      {Key? key,
       this.shortDescription,
       this.image,
       this.fullImage,
@@ -16,12 +16,12 @@ class CampusLifePhotoCard extends StatelessWidget {
       this.width})
       : super(key: key);
 
-  final GestureTapCallback onPressed;
-  final double height;
-  final double width;
-  final String image;
-  final String fullImage;
-  final String shortDescription;
+  final VoidCallback? onPressed;
+  final double? height;
+  final double? width;
+  final String? image;
+  final String? fullImage;
+  final String? shortDescription;
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -52,12 +52,12 @@ class CampusLifePhotoCard extends StatelessWidget {
                     borderRadius: appDefaultBorderRadius,
                     child: Container(
                       decoration: BoxDecoration(color: appPrimaryColor),
-                      height: this.height + 10,
+                      height: (this.height ?? 0) + 10,
                       child: FittedBox(
                         fit: BoxFit.cover,
                         child: Center(
                             child: ExtendedImage.network(
-                          this.fullImage,
+                          this.fullImage ?? '',
                           fit: BoxFit.fill,
                           cache: true,
                         )),
@@ -65,7 +65,7 @@ class CampusLifePhotoCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: this.height + 10,
+                    height: (this.height ?? 0) + 10,
                     width: this.width,
                     child: Opacity(
                       opacity: 0.3,

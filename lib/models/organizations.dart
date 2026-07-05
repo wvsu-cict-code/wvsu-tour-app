@@ -1,8 +1,8 @@
 class Organizations {
-  final String name;
-  final Map<String, dynamic> logo;
-  final Map<String, dynamic> createdBy;
-  final String description;
+  final String? name;
+  final Map<String, dynamic>? logo;
+  final Map<String, dynamic>? createdBy;
+  final String? description;
 
   Organizations({this.name, this.logo, this.createdBy, this.description});
 
@@ -11,7 +11,4 @@ class Organizations {
         logo = json['Logo'],
         createdBy = json['created_by'],
         description = json['Description'];
-
-  @override
-  List<Object> get props => [name, createdBy, logo, description];
 }

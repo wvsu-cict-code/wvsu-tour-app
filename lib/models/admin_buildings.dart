@@ -1,8 +1,8 @@
 class AdminBuildings {
-  final String name;
-  final Map<String, dynamic> featuredImage;
-  final Map<String, dynamic> createdBy;
-  final String longDescription;
+  final String? name;
+  final Map<String, dynamic>? featuredImage;
+  final Map<String, dynamic>? createdBy;
+  final String? longDescription;
   AdminBuildings(
       {this.name, this.featuredImage, this.createdBy, this.longDescription});
 
@@ -11,7 +11,4 @@ class AdminBuildings {
         featuredImage = json['FeaturedImage'],
         longDescription = json['LongDescription'],
         createdBy = json['created_by'];
-
-  @override
-  List<Object> get props => [name, featuredImage, createdBy, longDescription];
 }

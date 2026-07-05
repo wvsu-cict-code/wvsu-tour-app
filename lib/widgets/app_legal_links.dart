@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wvsu_tour_app/config/app.dart';
 
 class AppLegalLinks extends StatelessWidget {
-  const AppLegalLinks({Key key}) : super(key: key);
+  const AppLegalLinks({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

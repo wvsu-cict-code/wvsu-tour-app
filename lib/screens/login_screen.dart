@@ -5,9 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:websafe_svg/websafe_svg.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:wvsu_tour_app/config/app.dart';
+import 'package:wvsu_tour_app/widgets/app_primary_button.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({Key key}) : super(key: key);
+  LoginScreen({Key? key}) : super(key: key);
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -86,29 +87,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                           SizedBox(
                                             width: double.infinity,
                                             child: FittedBox(
-                                              child: FlatButton.icon(
-                                                  color: Color(0xFF075BB3),
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      25, 15, 25, 15),
-                                                  onPressed: () {
-                                                    Navigator
-                                                        .pushReplacementNamed(
-                                                            context, "/home");
-                                                  },
-                                                  icon: Icon(SimpleLineIcons
-                                                      .social_facebook),
-                                                  label: Text(
-                                                    "Login with Facebook",
-                                                    style: GoogleFonts.lato(
-                                                        color: Colors.white,
-                                                        fontSize: 15),
-                                                  ),
-                                                  textColor: Colors.white,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  10)))),
+                                              child: AppPrimaryButton(
+                                                text: "Login with Facebook",
+                                                icon: SimpleLineIcons
+                                                    .social_facebook,
+                                                onPressed: () {
+                                                  Navigator
+                                                      .pushReplacementNamed(
+                                                          context, "/home");
+                                                },
+                                              ),
                                             ),
                                           ),
                                           SizedBox(
@@ -117,30 +105,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                           SizedBox(
                                             width: double.infinity,
                                             child: FittedBox(
-                                              child: FlatButton.icon(
-                                                  color: Color(0xFF075BB3),
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      25, 15, 25, 15),
-                                                  onPressed: () {
-                                                    Navigator
-                                                        .pushReplacementNamed(
-                                                            context, "/home");
-                                                  },
-                                                  icon: Icon(SimpleLineIcons
-                                                      .social_google),
-                                                  label: Text(
-                                                    "Login with Google",
-                                                    softWrap: true,
-                                                    style: GoogleFonts.lato(
-                                                        color: Colors.white,
-                                                        fontSize: 15),
-                                                  ),
-                                                  textColor: Colors.white,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  10)))),
+                                              child: AppPrimaryButton(
+                                                text: "Login with Google",
+                                                icon: SimpleLineIcons
+                                                    .social_google,
+                                                onPressed: () {
+                                                  Navigator
+                                                      .pushReplacementNamed(
+                                                          context, "/home");
+                                                },
+                                              ),
                                             ),
                                           ),
                                         ]))),

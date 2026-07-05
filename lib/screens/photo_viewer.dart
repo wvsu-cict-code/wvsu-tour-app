@@ -1,5 +1,4 @@
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -7,9 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:photo_view/photo_view.dart';
 
 class PhotoViewer extends StatelessWidget {
-  const PhotoViewer({Key key, this.image, this.description}) : super(key: key);
-  final String description;
-  final String image;
+  const PhotoViewer({Key? key, this.image, this.description}) : super(key: key);
+  final String? description;
+  final String? image;
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +20,9 @@ class PhotoViewer extends StatelessWidget {
         body: Stack(
           children: [
             PhotoView(
-              imageProvider: ExtendedNetworkImageProvider(this.image),
+              imageProvider: ExtendedNetworkImageProvider(this.image ?? ''),
               loadingBuilder: (context, event) => Text("Loading...",
                   style: GoogleFonts.lato(color: Colors.white)),
-              loadFailedChild: Text(
-                "Image failed to load.",
-                style: GoogleFonts.lato(color: Colors.white),
-              ),
             ),
             Positioned(
               top: 30,

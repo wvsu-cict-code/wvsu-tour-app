@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class OrganizationsLogo extends StatelessWidget {
   const OrganizationsLogo(
-      {Key key,
+      {Key? key,
       this.name,
       this.logo,
       this.description,
@@ -11,26 +11,26 @@ class OrganizationsLogo extends StatelessWidget {
       this.width})
       : super(key: key);
 
-  final double height;
-  final double width;
-  final String logo;
-  final String description;
-  final String name;
+  final double? height;
+  final double? width;
+  final String? logo;
+  final String? description;
+  final String? name;
   @override
   Widget build(BuildContext context) {
     return Container(
       width: this.width,
-      height: this.height + 30,
+      height: (this.height ?? 0) + 30,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProfileAvatar(
-            this.logo,
+            this.logo ?? '',
             radius: 60,
-            backgroundColor: Colors.grey[200],
+            backgroundColor: Colors.grey[200] ?? Colors.grey,
             borderWidth: 10,
-            borderColor: Colors.grey[200],
+            borderColor: Colors.grey[200] ?? Colors.grey,
             cacheImage: true,
             onTap: () {
               print(this.logo);
@@ -40,11 +40,11 @@ class OrganizationsLogo extends StatelessWidget {
           ),
           Container(
             margin: EdgeInsets.only(top: 20),
-            width: this.width - 20,
+            width: (this.width ?? 0) - 20,
             child: Column(
               children: [
                 Text(
-                  this.name != null ? this.name : "Loading...",
+                  this.name ?? '',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   softWrap: true,

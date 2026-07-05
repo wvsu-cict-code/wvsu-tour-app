@@ -5,7 +5,7 @@ import 'package:wvsu_tour_app/config/app.dart';
 import 'package:wvsu_tour_app/widgets/admin_buildings_card.dart';
 
 class AdminBuildingsList extends StatefulWidget {
-  AdminBuildingsList({Key key}) : super(key: key);
+  AdminBuildingsList({Key? key}) : super(key: key);
 
   @override
   _AdminBuildingsListState createState() => _AdminBuildingsListState();
@@ -18,12 +18,10 @@ class _AdminBuildingsListState extends State<AdminBuildingsList> {
   Widget build(BuildContext context) {
     Size appScreenSize = MediaQuery.of(context).size;
 
-    CollectionReference collection =
+    final CollectionReference<Map<String, dynamic>> collection =
         FirebaseFirestore.instance.collection('head_offices');
 
     ScrollController _view = ScrollController();
-
-    collection.firestore.settings = Settings(persistenceEnabled: true);
 
     double _cardHeight = appScreenSize.height * 0.5;
 
@@ -31,10 +29,11 @@ class _AdminBuildingsListState extends State<AdminBuildingsList> {
         child: SizedBox(
             height: 250,
             width: double.infinity,
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: collection.snapshots(),
                 builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshot) {
                   if (snapshot.hasError) {
                     return Text("An error occured.");
                   }
@@ -55,7 +54,7 @@ class _AdminBuildingsListState extends State<AdminBuildingsList> {
                       children: [
                         SizedBox(width: 20),
                         Row(
-                          children: snapshot.data.docs
+                          children: snapshot.data!.docs
                               .map((e) => AdminBuildingCard(
                                     height: 200,
                                     width: 300,

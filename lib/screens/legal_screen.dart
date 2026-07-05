@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:wvsu_tour_app/config/app.dart';
 
 class LegalScreen extends StatefulWidget {
-  LegalScreen({Key key}) : super(key: key);
+  LegalScreen({Key? key}) : super(key: key);
 
   @override
   _LegalScreenState createState() => _LegalScreenState();
@@ -24,27 +24,25 @@ class _LegalScreenState extends State<LegalScreen> {
   }
 
   Future<void> getDocData() async {
-    this.setState(() {
+    setState(() {
       _loading = true;
     });
-    var privacyResponse = await http
-        .get(
-            "https://raw.githubusercontent.com/wvsu-cict-code/wvsu-tour-app/master/privacy.md")
-        .catchError((onError) {
-      print(onError);
-    });
+    final Uri privacyUri = Uri.parse(
+        "https://raw.githubusercontent.com/wvsu-cict-code/wvsu-tour-app/master/privacy.md");
+    final Uri termsUri = Uri.parse(
+        "https://raw.githubusercontent.com/wvsu-cict-code/wvsu-tour-app/master/terms_and_conditions.md");
+    final http.Response privacyResponse = await http.get(privacyUri);
     if (privacyResponse.statusCode == 200) {
-      this.setState(() {
+      setState(() {
         _markdownPrivacy = privacyResponse.body;
       });
     } else {
       print('Request failed with status: ${privacyResponse.statusCode}.');
     }
 
-    var termsResponse = await http.get(
-        "https://raw.githubusercontent.com/wvsu-cict-code/wvsu-tour-app/master/terms_and_conditions.md");
+    final http.Response termsResponse = await http.get(termsUri);
     if (termsResponse.statusCode == 200) {
-      this.setState(() {
+      setState(() {
         _markdownTerms = termsResponse.body;
         _loading = false;
       });

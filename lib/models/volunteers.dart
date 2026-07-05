@@ -1,8 +1,8 @@
 class Volunteers {
-  final String name;
-  final Map<String, dynamic> profileImage;
-  final Map<String, dynamic> createdBy;
-  final String description;
+  final String? name;
+  final Map<String, dynamic>? profileImage;
+  final Map<String, dynamic>? createdBy;
+  final String? description;
 
   Volunteers({this.name, this.profileImage, this.createdBy, this.description});
 
@@ -11,7 +11,4 @@ class Volunteers {
         profileImage = json['ProfileImage'],
         createdBy = json['created_by'],
         description = json['Description'];
-
-  @override
-  List<Object> get props => [name, createdBy, profileImage, description];
 }

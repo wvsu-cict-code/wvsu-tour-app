@@ -1,8 +1,8 @@
 class HistoricalArtisticLandmarks {
-  final String name;
-  final String location;
-  final Map<String, dynamic> createdBy;
-  final Map<String, dynamic> featuredImage;
+  final String? name;
+  final String? location;
+  final Map<String, dynamic>? createdBy;
+  final Map<String, dynamic>? featuredImage;
 
   HistoricalArtisticLandmarks(
       {this.name, this.location, this.featuredImage, this.createdBy});
@@ -12,7 +12,4 @@ class HistoricalArtisticLandmarks {
         location = json['Location'],
         featuredImage = json['FeaturedImage'],
         createdBy = json['created_by'];
-
-  @override
-  List<Object> get props => [name, location, featuredImage, createdBy];
 }

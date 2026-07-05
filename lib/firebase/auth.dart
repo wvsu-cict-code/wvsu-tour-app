@@ -5,7 +5,7 @@ abstract class BaseAuth {
 
   Future<String> signUp(String email, String password);
 
-  Future<User> getCurrentUser();
+  Future<User?> getCurrentUser();
 
   Future<void> sendEmailVerification();
 
@@ -13,7 +13,7 @@ abstract class BaseAuth {
 
   Future<bool> isEmailVerified();
 
-  Stream<User> checkAuthStatus();
+  Stream<User?> checkAuthStatus();
 
   Future<UserCredential> signInWithCredentials(AuthCredential credential);
 }
@@ -21,45 +21,60 @@ abstract class BaseAuth {
 class Auth implements BaseAuth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  @override
   Future<String> signIn(String email, String password) async {
-    UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
-    User user = result.user;
+    final UserCredential result = await _firebaseAuth
+        .signInWithEmailAndPassword(email: email, password: password);
+    final User? user = result.user;
+    if (user == null) {
+      throw StateError('Firebase sign-in completed without a user.');
+    }
     return user.uid;
   }
 
+  @override
   Future<String> signUp(String email, String password) async {
-    UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    User user = result.user;
+    final UserCredential result = await _firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password);
+    final User? user = result.user;
+    if (user == null) {
+      throw StateError('Firebase sign-up completed without a user.');
+    }
     return user.uid;
   }
 
+  @override
   Future<UserCredential> signInWithCredentials(
       AuthCredential credential) async {
-    return await _firebaseAuth.signInWithCredential(credential);
+    return _firebaseAuth.signInWithCredential(credential);
   }
 
-  Future<User> getCurrentUser() async {
-    User user = _firebaseAuth.currentUser;
-    return user;
+  @override
+  Future<User?> getCurrentUser() async {
+    return _firebaseAuth.currentUser;
   }
 
+  @override
   Future<void> signOut() async {
     return _firebaseAuth.signOut();
   }
 
-  Stream<User> checkAuthStatus() {
+  @override
+  Stream<User?> checkAuthStatus() {
     return _firebaseAuth.authStateChanges();
   }
 
+  @override
   Future<void> sendEmailVerification() async {
-    User user = _firebaseAuth.currentUser;
-    user.sendEmailVerification();
+    final User? user = _firebaseAuth.currentUser;
+    if (user != null) {
+      await user.sendEmailVerification();
+    }
   }
 
+  @override
   Future<bool> isEmailVerified() async {
-    User user = _firebaseAuth.currentUser;
-    return user.emailVerified;
+    final User? user = _firebaseAuth.currentUser;
+    return user?.emailVerified ?? false;
   }
 }

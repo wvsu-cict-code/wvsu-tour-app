@@ -3,11 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wvsu_tour_app/config/app.dart';
 
 class AppSecondaryButton extends StatefulWidget {
-  AppSecondaryButton({Key key, this.text, this.onPressed, this.icon})
+  AppSecondaryButton({Key? key, this.text, this.onPressed, this.icon})
       : super(key: key);
-  final String text;
-  final GestureTapCallback onPressed;
-  final IconData icon;
+  final String? text;
+  final VoidCallback? onPressed;
+  final IconData? icon;
   @override
   _AppSecondaryButtonState createState() => _AppSecondaryButtonState();
 }
@@ -16,7 +16,7 @@ class _AppSecondaryButtonState extends State<AppSecondaryButton> {
   TextStyle buttonStyle =
       GoogleFonts.lato(color: appSecondaryColor, fontSize: 15);
   EdgeInsetsGeometry buttonPadding = EdgeInsets.fromLTRB(0, 15, 0, 15);
-  ShapeBorder buttonShape = RoundedRectangleBorder(
+  OutlinedBorder buttonShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(23),
       side: BorderSide(color: appSecondaryColor));
   Color buttonTextColor = appSecondaryColor;
@@ -25,22 +25,17 @@ class _AppSecondaryButtonState extends State<AppSecondaryButton> {
     return Container(
       child: SizedBox(
           width: double.infinity,
-          child: widget.icon != null
-              ? FlatButton.icon(
-                  color: Colors.white,
-                  padding: buttonPadding,
-                  onPressed: widget.onPressed,
-                  icon: Icon(widget.icon),
-                  label: Text(widget.text, style: buttonStyle),
-                  textColor: buttonTextColor,
-                  shape: buttonShape)
-              : FlatButton(
-                  color: Colors.white,
-                  padding: buttonPadding,
-                  onPressed: widget.onPressed,
-                  child: Text(widget.text, style: buttonStyle),
-                  textColor: buttonTextColor,
-                  shape: buttonShape)),
+          child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: buttonTextColor,
+                backgroundColor: Colors.white,
+                padding: buttonPadding,
+                shape: buttonShape,
+                side: BorderSide(color: appSecondaryColor),
+              ),
+              onPressed: widget.onPressed,
+              icon: Icon(widget.icon),
+              label: Text(widget.text ?? '', style: buttonStyle))),
     );
   }
 }

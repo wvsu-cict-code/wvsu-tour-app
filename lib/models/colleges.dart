@@ -1,12 +1,12 @@
 class Colleges {
-  final String campus;
-  final List<dynamic> photos;
-  final String longDescription;
-  final String shortDescription;
-  final Map<String, dynamic> createdBy;
-  final Map<String, dynamic> featuredImage;
-  final Map<String, dynamic> logo;
-  final String name;
+  final String? campus;
+  final List<dynamic>? photos;
+  final String? longDescription;
+  final String? shortDescription;
+  final Map<String, dynamic>? createdBy;
+  final Map<String, dynamic>? featuredImage;
+  final Map<String, dynamic>? logo;
+  final String? name;
 
   Colleges(
       {this.campus,
@@ -27,16 +27,4 @@ class Colleges {
         logo = json['Logo'],
         longDescription = json['LongDescription'],
         createdBy = json['created_by'];
-
-  @override
-  List<Object> get props => [
-        campus,
-        featuredImage,
-        createdBy,
-        logo,
-        longDescription,
-        photos,
-        name,
-        shortDescription
-      ];
 }

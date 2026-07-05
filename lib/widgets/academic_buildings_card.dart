@@ -7,7 +7,7 @@ import 'package:wvsu_tour_app/screens/academic_building_details_screen.dart';
 
 class AcademicBuildingCard extends StatelessWidget {
   const AcademicBuildingCard(
-      {Key key,
+      {Key? key,
       this.featureImage,
       this.fullImage,
       this.height,
@@ -15,12 +15,12 @@ class AcademicBuildingCard extends StatelessWidget {
       this.width,
       this.longDescription})
       : super(key: key);
-  final String longDescription;
-  final String name;
-  final double height;
-  final double width;
-  final String featureImage;
-  final String fullImage;
+  final String? longDescription;
+  final String? name;
+  final double? height;
+  final double? width;
+  final String? featureImage;
+  final String? fullImage;
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -52,19 +52,19 @@ class AcademicBuildingCard extends StatelessWidget {
                     borderRadius: appDefaultBorderRadius,
                     child: Container(
                       decoration: BoxDecoration(color: appPrimaryColor),
-                      height: this.height + 10,
+                      height: (this.height ?? 0) + 10,
                       child: FittedBox(
                         fit: BoxFit.cover,
                         child: Center(
                             child: ExtendedImage.network(
-                          this.featureImage,
+                          this.featureImage ?? '',
                           fit: BoxFit.fill,
                         )),
                       ),
                     ),
                   ),
                   SizedBox(
-                    height: this.height + 10,
+                    height: (this.height ?? 0) + 10,
                     width: this.width,
                     child: Opacity(
                       opacity: 0.3,
@@ -86,8 +86,7 @@ class AcademicBuildingCard extends StatelessWidget {
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width * 0.65,
-                          child: Text(
-                              this.name != null ? this.name : "Loading...",
+                          child: Text(this.name ?? '',
                               style: GoogleFonts.lato(color: Colors.white),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,

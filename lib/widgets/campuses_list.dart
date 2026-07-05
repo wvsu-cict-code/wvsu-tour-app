@@ -5,7 +5,7 @@ import 'package:wvsu_tour_app/config/app.dart';
 import 'package:wvsu_tour_app/widgets/campus_card.dart';
 
 class CampusesList extends StatefulWidget {
-  CampusesList({Key key}) : super(key: key);
+  CampusesList({Key? key}) : super(key: key);
 
   @override
   _CampusesListState createState() => _CampusesListState();
@@ -18,7 +18,7 @@ class _CampusesListState extends State<CampusesList> {
   Widget build(BuildContext context) {
     Size appScreenSize = MediaQuery.of(context).size;
 
-    CollectionReference collection =
+    final CollectionReference<Map<String, dynamic>> collection =
         FirebaseFirestore.instance.collection('campuses');
 
     ScrollController _view = ScrollController();
@@ -28,10 +28,11 @@ class _CampusesListState extends State<CampusesList> {
         child: SizedBox(
             height: 250,
             width: double.infinity,
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: collection.snapshots(),
                 builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshot) {
                   if (snapshot.hasError) {
                     return Text("An error occured.");
                   }
@@ -53,7 +54,7 @@ class _CampusesListState extends State<CampusesList> {
                       children: [
                         SizedBox(width: 20),
                         Row(
-                          children: snapshot.data.docs
+                          children: snapshot.data!.docs
                               .map((e) => CampusCard(
                                     id: e.id,
                                     height: 200,

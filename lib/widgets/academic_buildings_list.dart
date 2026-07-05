@@ -5,7 +5,7 @@ import 'package:wvsu_tour_app/config/app.dart';
 import 'package:wvsu_tour_app/widgets/academic_buildings_card.dart';
 
 class AcademicBuildingsList extends StatefulWidget {
-  AcademicBuildingsList({Key key}) : super(key: key);
+  AcademicBuildingsList({Key? key}) : super(key: key);
 
   @override
   _AcademicBuildingsListState createState() => _AcademicBuildingsListState();
@@ -22,18 +22,17 @@ class _AcademicBuildingsListState extends State<AcademicBuildingsList> {
 
     double _cardHeight = appScreenSize.height * 0.5;
 
-    CollectionReference collection =
+    final CollectionReference<Map<String, dynamic>> collection =
         FirebaseFirestore.instance.collection('academic_buildings');
-
-    collection.firestore.settings = Settings(persistenceEnabled: true);
     return Container(
         child: SizedBox(
             height: 250,
             width: double.infinity,
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: collection.snapshots(),
                 builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshot) {
                   if (snapshot.hasError) {
                     return Text("An error occured.");
                   }
@@ -54,7 +53,7 @@ class _AcademicBuildingsListState extends State<AcademicBuildingsList> {
                         children: [
                           SizedBox(width: 20),
                           Row(
-                            children: snapshot.data.docs
+                            children: snapshot.data!.docs
                                 .map((e) => AcademicBuildingCard(
                                     height: 200,
                                     width: 300,

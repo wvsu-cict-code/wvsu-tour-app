@@ -5,7 +5,7 @@ import 'package:wvsu_tour_app/config/app.dart';
 import 'package:wvsu_tour_app/widgets/organizations_logo.dart';
 
 class OrganizationsList extends StatefulWidget {
-  OrganizationsList({Key key}) : super(key: key);
+  OrganizationsList({Key? key}) : super(key: key);
 
   @override
   _OrganizationsListState createState() => _OrganizationsListState();
@@ -18,23 +18,25 @@ class _OrganizationsListState extends State<OrganizationsList> {
   Widget build(BuildContext context) {
     Size appScreenSize = MediaQuery.of(context).size;
 
-    CollectionReference collection =
+    final CollectionReference<Map<String, dynamic>> collection =
         FirebaseFirestore.instance.collection('school_organization');
     ScrollController _view = ScrollController();
     return Container(
         child: SizedBox(
             height: 250,
             width: double.infinity,
-            child: FutureBuilder<QuerySnapshot>(
+            child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 future: collection.get(),
                 builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshot) {
                   if (snapshot.hasError) {
                     return Text("An error occured.");
                   }
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasData) {
-                      List<QueryDocumentSnapshot> data = snapshot.data.docs;
+                      final List<QueryDocumentSnapshot<Map<String, dynamic>>>
+                          data = snapshot.data!.docs;
                       return new SingleChildScrollView(
                         controller: _view,
                         scrollDirection: Axis.horizontal,

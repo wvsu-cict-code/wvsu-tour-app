@@ -7,7 +7,7 @@ import 'package:wvsu_tour_app/screens/admin_building_details_screen.dart';
 
 class AdminBuildingCard extends StatelessWidget {
   const AdminBuildingCard(
-      {Key key,
+      {Key? key,
       this.featureImage,
       this.fullImage,
       this.height,
@@ -15,12 +15,12 @@ class AdminBuildingCard extends StatelessWidget {
       this.width,
       this.longDescription})
       : super(key: key);
-  final String longDescription;
-  final String name;
-  final double height;
-  final double width;
-  final String featureImage;
-  final String fullImage;
+  final String? longDescription;
+  final String? name;
+  final double? height;
+  final double? width;
+  final String? featureImage;
+  final String? fullImage;
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -52,12 +52,12 @@ class AdminBuildingCard extends StatelessWidget {
                     borderRadius: appDefaultBorderRadius,
                     child: Container(
                       decoration: BoxDecoration(color: appPrimaryColor),
-                      height: this.height + 10,
+                      height: (this.height ?? 0) + 10,
                       child: FittedBox(
                         fit: BoxFit.cover,
                         child: Center(
                             child: ExtendedImage.network(
-                          this.featureImage,
+                          this.featureImage ?? '',
                           fit: BoxFit.fill,
                           cache: true,
                         )),
@@ -65,7 +65,7 @@ class AdminBuildingCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: this.height + 10,
+                    height: (this.height ?? 0) + 10,
                     width: this.width,
                     child: Opacity(
                       opacity: 0.3,
@@ -87,8 +87,7 @@ class AdminBuildingCard extends StatelessWidget {
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width * 0.65,
-                          child: Text(
-                              this.name != null ? this.name : "Loading...",
+                          child: Text(this.name ?? '',
                               style: GoogleFonts.lato(color: Colors.white),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,

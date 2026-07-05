@@ -1,10 +1,10 @@
 class Campuses {
-  final String shortDescription;
-  final String fullDescription;
-  final String name;
-  final Map<String, dynamic> logo;
-  final Map<String, dynamic> featuredImage;
-  final Map<String, dynamic> createdBy;
+  final String? shortDescription;
+  final String? fullDescription;
+  final String? name;
+  final Map<String, dynamic>? logo;
+  final Map<String, dynamic>? featuredImage;
+  final Map<String, dynamic>? createdBy;
 
   Campuses(
       {this.shortDescription,
@@ -21,8 +21,4 @@ class Campuses {
         logo = json['Logo'],
         featuredImage = json['FeaturedImage'],
         createdBy = json['created_by'];
-
-  @override
-  List<Object> get props =>
-      [shortDescription, fullDescription, name, logo, featuredImage, createdBy];
 }

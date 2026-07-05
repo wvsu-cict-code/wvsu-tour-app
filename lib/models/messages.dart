@@ -1,9 +1,9 @@
 class Messages {
-  final String name;
-  final String messageBody;
-  final Map<String, dynamic> featuredImage;
-  final Map<String, dynamic> createdBy;
-  final String description;
+  final String? name;
+  final String? messageBody;
+  final Map<String, dynamic>? featuredImage;
+  final Map<String, dynamic>? createdBy;
+  final String? description;
 
   Messages(
       {this.name,
@@ -18,8 +18,4 @@ class Messages {
         featuredImage = json['FeaturedImage'],
         createdBy = json['created_by'],
         description = json['Description'];
-
-  @override
-  List<Object> get props =>
-      [name, messageBody, featuredImage, createdBy, description];
 }

@@ -5,7 +5,7 @@ import 'package:wvsu_tour_app/screens/auth_screen.dart';
 import 'package:wvsu_tour_app/screens/home_screen.dart';
 
 class RootScreen extends StatefulWidget {
-  RootScreen({this.auth});
+  const RootScreen({super.key, required this.auth});
 
   final BaseAuth auth;
 
@@ -21,7 +21,7 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User>(
+    return StreamBuilder<User?>(
       stream: widget.auth.checkAuthStatus(),
       builder: (BuildContext context, snapshot) {
         if (snapshot.hasData) {

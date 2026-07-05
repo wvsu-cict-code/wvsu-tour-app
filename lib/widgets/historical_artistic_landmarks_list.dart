@@ -5,7 +5,7 @@ import 'package:wvsu_tour_app/config/app.dart';
 import 'package:wvsu_tour_app/widgets/historical_artistic_landmarks_card.dart';
 
 class HistoricalArtisticLandmarksList extends StatefulWidget {
-  HistoricalArtisticLandmarksList({Key key}) : super(key: key);
+  HistoricalArtisticLandmarksList({Key? key}) : super(key: key);
 
   @override
   _HistoricalArtisticLandmarksListState createState() =>
@@ -21,17 +21,18 @@ class _HistoricalArtisticLandmarksListState
   Widget build(BuildContext context) {
     Size appScreenSize = MediaQuery.of(context).size;
 
-    CollectionReference collection =
+    final CollectionReference<Map<String, dynamic>> collection =
         FirebaseFirestore.instance.collection('landmarks');
 
     return Container(
         child: SizedBox(
             height: 250,
             width: double.infinity,
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: collection.snapshots(),
                 builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshot) {
                   if (snapshot.hasError) {
                     return Text("An error occured.");
                   }
@@ -52,7 +53,7 @@ class _HistoricalArtisticLandmarksListState
                       children: [
                         SizedBox(width: 20),
                         Row(
-                            children: snapshot.data.docs
+                            children: snapshot.data!.docs
                                 .map((e) => HistoricalArtisticLandmarksCard(
                                       height: 200,
                                       width: 300,

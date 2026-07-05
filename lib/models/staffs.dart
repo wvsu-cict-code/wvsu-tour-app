@@ -1,10 +1,10 @@
 class Staffs {
-  final String name;
-  final String office;
-  final String description;
-  final Map<String, dynamic> profilePicture;
-  final Map<String, dynamic> createdBy;
-  final String campus;
+  final String? name;
+  final String? office;
+  final String? description;
+  final Map<String, dynamic>? profilePicture;
+  final Map<String, dynamic>? createdBy;
+  final String? campus;
 
   Staffs(
       {this.name,
@@ -21,8 +21,4 @@ class Staffs {
         profilePicture = json['ProfilePicture'],
         createdBy = json['created_by'],
         description = json['Description'];
-
-  @override
-  List<Object> get props =>
-      [name, office, campus, profilePicture, createdBy, description];
 }

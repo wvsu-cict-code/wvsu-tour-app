@@ -13,15 +13,15 @@ import 'package:wvsu_tour_app/widgets/app_primary_button.dart';
 import 'package:wvsu_tour_app/widgets/app_secondary_button.dart';
 
 class AuthScreen extends StatefulWidget {
-  AuthScreen({Key key, this.auth}) : super(key: key);
+  const AuthScreen({super.key, required this.auth});
+
   final BaseAuth auth;
   @override
   _AuthScreenState createState() => _AuthScreenState();
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   int _pageState = 0;
 
   var _backgroundColor = appPrimaryColor;
@@ -42,69 +42,68 @@ class _AuthScreenState extends State<AuthScreen> {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
         statusBarColor: Colors.transparent));
+    _googleSignIn.initialize();
   }
 
   void _showSnackbar(String message) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
-  _loginWithFacebook() async {
-    UserCredential userCredential;
-    String redirectUri = "https://www.facebook.com/connect/login_success.html";
-    String result = await Navigator.push(
+  Future<void> _loginWithFacebook() async {
+    final String redirectUri =
+        "https://www.facebook.com/connect/login_success.html";
+    final String? result = await Navigator.push<String>(
         context,
         MaterialPageRoute(
             builder: (context) => FacebookAuthWeb(
                   selectedUrl:
                       'https://www.facebook.com/dialog/oauth?client_id=$facebookAppID&redirect_uri=$redirectUri&response_type=token&scope=email,public_profile,',
-                ),
-            maintainState: true));
-    if (result != null) {
-      try {
-        setState(() {
-          _loading = true;
-        });
-        final facebookAuthCred = FacebookAuthProvider.credential(result);
-        userCredential =
-            await widget.auth.signInWithCredentials(facebookAuthCred);
-        this._showSnackbar("Logged in with Facebook");
-        print(userCredential.user.uid);
-      } catch (e) {
-        setState(() {
-          _loading = false;
-        });
-        print(e);
-        this._showSnackbar("Failed to sign in with Facebook. :(");
-      }
+                )));
+    if (result == null || result.isEmpty) {
+      return;
     }
-  }
 
-  _loginWithGoogle() async {
     try {
       setState(() {
         _loading = true;
       });
-      UserCredential userCredential;
-
-      final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final GoogleAuthCredential googleAuthCredential =
-          GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      userCredential =
-          await widget.auth.signInWithCredentials(googleAuthCredential);
-      this._showSnackbar("Logged in with Google");
-      print(userCredential.user.uid);
+      final facebookAuthCred = FacebookAuthProvider.credential(result);
+      final UserCredential userCredential =
+          await widget.auth.signInWithCredentials(facebookAuthCred);
+      _showSnackbar("Logged in with Facebook");
+      print(userCredential.user?.uid);
     } catch (e) {
       setState(() {
         _loading = false;
       });
       print(e);
-      this._showSnackbar("Failed to sign in with Google. :(");
+      _showSnackbar("Failed to sign in with Facebook. :(");
+    }
+  }
+
+  Future<void> _loginWithGoogle() async {
+    try {
+      setState(() {
+        _loading = true;
+      });
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final OAuthCredential googleAuthCredential =
+          GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+      final UserCredential userCredential =
+          await widget.auth.signInWithCredentials(googleAuthCredential);
+      _showSnackbar("Logged in with Google");
+      print(userCredential.user?.uid);
+    } catch (e) {
+      setState(() {
+        _loading = false;
+      });
+      print(e);
+      _showSnackbar("Failed to sign in with Google. :(");
     }
   }
 
@@ -192,256 +191,139 @@ class _AuthScreenState extends State<AuthScreen> {
       }
     }
 
-    return new Scaffold(
-        key: _scaffoldKey,
+    return Scaffold(
         body: Stack(
-          children: [
-            AnimatedContainer(
-              curve: Curves.fastLinearToSlowEaseIn,
-              duration: Duration(milliseconds: 1000),
-              color: _backgroundColor,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.only(top: appScreenSize.height * 0.07),
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Column(
-                      children: [
-                        AnimatedSwitcher(
-                          transitionBuilder: (child, animation) =>
-                              FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          ),
-                          duration: Duration(milliseconds: 1000),
-                          switchInCurve: Curves.fastLinearToSlowEaseIn,
-                          child: _appIcon,
-                        ),
-                      ],
+      children: [
+        AnimatedContainer(
+          curve: Curves.fastLinearToSlowEaseIn,
+          duration: Duration(milliseconds: 1000),
+          color: _backgroundColor,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.only(top: appScreenSize.height * 0.07),
+                padding: EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  children: [
+                    AnimatedSwitcher(
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      ),
+                      duration: Duration(milliseconds: 1000),
+                      switchInCurve: Curves.fastLinearToSlowEaseIn,
+                      child: _appIcon,
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Center(
-                    child: WebsafeSvg.asset(
-                        "assets/images/welcome_illustration.svg",
-                        height: appScreenSize.width * 0.8),
-                  ),
-                  Padding(
-                      padding: EdgeInsets.all(30),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: AppPrimaryButton(
-                          text: "Let's Go!",
-                          onPressed: () {
-                            showDialog<void>(
-                              context: context,
-                              barrierDismissible:
-                                  false, // user must tap button!
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Currently in Open Beta'),
-                                  content: SingleChildScrollView(
-                                    child: ListBody(
-                                      children: <Widget>[
-                                        Text(
-                                            'More features and contents will be added soon.'),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      child: Text('OK'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        _switchToState(0, 1);
-                                      },
-                                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10),
+              Center(
+                child: WebsafeSvg.asset(
+                    "assets/images/welcome_illustration.svg",
+                    height: appScreenSize.width * 0.8),
+              ),
+              Padding(
+                  padding: EdgeInsets.all(30),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: AppPrimaryButton(
+                      text: "Let's Go!",
+                      onPressed: () {
+                        showDialog<void>(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Currently in Open Beta'),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text(
+                                        'More features and contents will be added soon.'),
                                   ],
-                                );
-                              },
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    _switchToState(0, 1);
+                                  },
+                                ),
+                              ],
                             );
                           },
-                        ),
-                      ))
-                ],
-              ),
-            ),
-            AnimatedContainer(
-                padding: EdgeInsets.all(32),
-                width: _loginWidth == 0 ? appScreenSize.width : _loginWidth,
-                curve: Curves.fastLinearToSlowEaseIn,
-                duration: Duration(milliseconds: 1000),
-                transform:
-                    Matrix4.translationValues(_loginXOffset, _loginYOffset, 1),
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(_loginOpacity),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25),
-                        topRight: Radius.circular(25))),
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "Login",
-                          style: GoogleFonts.lato(fontSize: 27),
-                        ),
-                        Text(
-                          "Select an option to login on an existing account or create a new one.",
-                          style: GoogleFonts.lato(),
-                        ),
-                        SizedBox(height: 20),
-                        Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            child: AppPrimaryButton(
-                              onPressed: () => _loginWithFacebook(),
-                              text: "Login with Facebook",
-                              icon: SimpleLineIcons.social_facebook,
-                            )),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          child: SizedBox(
-                              width: double.infinity,
-                              child: AppPrimaryButton(
-                                text: "Login with Google",
-                                icon: SimpleLineIcons.social_google,
-                                onPressed: () => _loginWithGoogle(),
-                              )),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            child: SizedBox(
-                                width: double.infinity,
-                                child: AppSecondaryButton(
-                                  text: "Create a New Account",
-                                  onPressed: () {
-                                    this.setState(() {
-                                      _pageState != 2
-                                          ? _pageState = 2
-                                          : _pageState = 1;
-                                    });
-                                    print(_pageState);
-                                  },
-                                ))),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        AppLegalLinks()
-                      ],
+                        );
+                      },
                     ),
-                    Positioned(
-                        top: -10,
-                        right: 0,
-                        child: IconButton(
-                          icon: Icon(SimpleLineIcons.close,
-                              color: appSecondaryColor),
-                          onPressed: () {
-                            setState(() {
-                              _pageState != 0 ? _pageState = 0 : _pageState = 1;
-                            });
-
-                            setState(() {
-                              _appIcon = Container(
-                                  key: ValueKey(2),
-                                  child: Column(
-                                    children: [
-                                      WebsafeSvg.asset(
-                                          "assets/icon/icon-light.svg",
-                                          height: appIconSize),
-                                      SizedBox(height: 20),
-                                      Text(
-                                        "West Visayas State University",
-                                        style: GoogleFonts.lato(
-                                            color: Colors.white),
-                                      ),
-                                      Text("Campus Tour",
-                                          style: GoogleFonts.pattaya(
-                                              color: Colors.white,
-                                              fontSize: 30))
-                                    ],
-                                  ));
-                            });
-
-                            print(_pageState);
-                          },
-                        ))
-                  ],
-                )),
-            AnimatedContainer(
-              padding: EdgeInsets.all(32),
-              width: double.infinity,
-              curve: Curves.fastLinearToSlowEaseIn,
-              duration: Duration(milliseconds: 1000),
-              transform: Matrix4.translationValues(0, _signUpYOffset, 2),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25),
-                      topRight: Radius.circular(25))),
-              child: Container(
-                child: Column(
+                  ))
+            ],
+          ),
+        ),
+        AnimatedContainer(
+            padding: EdgeInsets.all(32),
+            width: _loginWidth == 0 ? appScreenSize.width : _loginWidth,
+            curve: Curves.fastLinearToSlowEaseIn,
+            duration: Duration(milliseconds: 1000),
+            transform:
+                Matrix4.translationValues(_loginXOffset, _loginYOffset, 1),
+            decoration: BoxDecoration(
+                color: Colors.white.withOpacity(_loginOpacity),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(25),
+                    topRight: Radius.circular(25))),
+            child: Stack(
+              children: [
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
                       height: 10,
                     ),
                     Text(
-                      "Create an Account",
+                      "Login",
                       style: GoogleFonts.lato(fontSize: 27),
                     ),
                     Text(
-                      "Select an option to create a new account.",
+                      "Select an option to login on an existing account or create a new one.",
                       style: GoogleFonts.lato(),
                     ),
                     SizedBox(height: 20),
                     Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: FlatButton.icon(
-                              color: Color(0xFF075BB3),
-                              padding: EdgeInsets.fromLTRB(25, 15, 25, 15),
-                              onPressed: () {},
-                              icon: Icon(SimpleLineIcons.social_facebook),
-                              label: Text(
-                                "Continue with Facebook",
-                                style: GoogleFonts.lato(
-                                    color: Colors.white, fontSize: 15),
-                              ),
-                              textColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(23)))),
+                        child: AppPrimaryButton(
+                          onPressed: () => _loginWithFacebook(),
+                          text: "Login with Facebook",
+                          icon: SimpleLineIcons.social_facebook,
                         )),
                     Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: AppPrimaryButton(
-                          text: "Continue with Google",
-                          onPressed: () => _loginWithGoogle(),
-                        )),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: SizedBox(
+                          width: double.infinity,
+                          child: AppPrimaryButton(
+                            text: "Login with Google",
+                            icon: SimpleLineIcons.social_google,
+                            onPressed: () => _loginWithGoogle(),
+                          )),
+                    ),
                     Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         child: SizedBox(
                             width: double.infinity,
                             child: AppSecondaryButton(
-                              text: "Back to Login",
+                              text: "Create a New Account",
                               onPressed: () {
-                                setState(() {
-                                  _pageState == 2
-                                      ? _pageState = 1
-                                      : _pageState = 0;
+                                this.setState(() {
+                                  _pageState != 2
+                                      ? _pageState = 2
+                                      : _pageState = 1;
                                 });
                                 print(_pageState);
                               },
@@ -452,14 +334,111 @@ class _AuthScreenState extends State<AuthScreen> {
                     AppLegalLinks()
                   ],
                 ),
-              ),
+                Positioned(
+                    top: -10,
+                    right: 0,
+                    child: IconButton(
+                      icon:
+                          Icon(SimpleLineIcons.close, color: appSecondaryColor),
+                      onPressed: () {
+                        setState(() {
+                          _pageState != 0 ? _pageState = 0 : _pageState = 1;
+                        });
+
+                        setState(() {
+                          _appIcon = Container(
+                              key: ValueKey(2),
+                              child: Column(
+                                children: [
+                                  WebsafeSvg.asset("assets/icon/icon-light.svg",
+                                      height: appIconSize),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    "West Visayas State University",
+                                    style:
+                                        GoogleFonts.lato(color: Colors.white),
+                                  ),
+                                  Text("Campus Tour",
+                                      style: GoogleFonts.pattaya(
+                                          color: Colors.white, fontSize: 30))
+                                ],
+                              ));
+                        });
+
+                        print(_pageState);
+                      },
+                    ))
+              ],
+            )),
+        AnimatedContainer(
+          padding: EdgeInsets.all(32),
+          width: double.infinity,
+          curve: Curves.fastLinearToSlowEaseIn,
+          duration: Duration(milliseconds: 1000),
+          transform: Matrix4.translationValues(0, _signUpYOffset, 2),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Create an Account",
+                  style: GoogleFonts.lato(fontSize: 27),
+                ),
+                Text(
+                  "Select an option to create a new account.",
+                  style: GoogleFonts.lato(),
+                ),
+                SizedBox(height: 20),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: AppPrimaryButton(
+                        text: "Continue with Facebook",
+                        icon: SimpleLineIcons.social_facebook,
+                        onPressed: _loginWithFacebook,
+                      ),
+                    )),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: AppPrimaryButton(
+                      text: "Continue with Google",
+                      onPressed: () => _loginWithGoogle(),
+                    )),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: SizedBox(
+                        width: double.infinity,
+                        child: AppSecondaryButton(
+                          text: "Back to Login",
+                          onPressed: () {
+                            setState(() {
+                              _pageState == 2 ? _pageState = 1 : _pageState = 0;
+                            });
+                            print(_pageState);
+                          },
+                        ))),
+                SizedBox(
+                  height: 10,
+                ),
+                AppLegalLinks()
+              ],
             ),
-            _loading == true
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Container()
-          ],
-        ));
+          ),
+        ),
+        _loading == true
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Container()
+      ],
+    ));
   }
 }
